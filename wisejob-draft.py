@@ -18,8 +18,6 @@ with st.sidebar:
 DATE_COLUMN = 'date/time'
 DATA_URL = ('dataset.csv')
 
-#DATA_URL = ('https://www.kaggle.com/datasets/victorbarahona/wisejob?rvi=1')
-
 @st.cache
 def load_data(nrows):
     data = pd.read_csv(DATA_URL, nrows=nrows)
