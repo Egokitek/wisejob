@@ -16,7 +16,7 @@ with st.sidebar:
 
 
 DATE_COLUMN = 'date/time'
-DATA_URL = ('dataset.csv')
+DATA_URL = ('dataset_reducido.csv')
 
 @st.cache
 def load_data(nrows):
