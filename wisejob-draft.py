@@ -2,40 +2,52 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-st.title('Uber pickups in NYC')
+st.title('WISEJOB')
+st.subheader('Sistema de priorización del aprendizaje')
+st.subheader('_______________________________________')
+
+with st.sidebar:
+  st.title('WISEJOB - Saturdays AI Bilbao 22-23')
+  st.subheader('__________________________________________')
+  st.title('Autoría:')
+  st.subheader('Ana Patricia Bautista, Samuel Vidal,')
+  st.subheader('Valentina González, Victor Barahona')
+  st.subheader('__________________________________________')
+
 
 DATE_COLUMN = 'date/time'
-DATA_URL = ('https://s3-us-west-2.amazonaws.com/'
-         'streamlit-demo-data/uber-raw-data-sep14.csv.gz')
+DATA_URL = ('dataset.csv')
+
+#DATA_URL = ('https://www.kaggle.com/datasets/victorbarahona/wisejob?rvi=1')
 
 @st.cache
 def load_data(nrows):
     data = pd.read_csv(DATA_URL, nrows=nrows)
-    lowercase = lambda x: str(x).lower()
-    data.rename(lowercase, axis='columns', inplace=True)
-    data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
     return data
-	
-# Create a text element and let the reader know the data is loading.
-data_load_state = st.text('Loading data...')
-# Load 10,000 rows of data into the dataframe.
-data = load_data(10000)
-# Notify the reader that the data was successfully loaded.
-data_load_state.text("Done! (using st.cache)")
 
-if st.checkbox('Show raw data'):
-    st.subheader('Raw data')
+with st.sidebar:
+  # Create a text element and let the reader know the data is loading.
+  data_load_state = st.text('Cargando datos del dataframe...')
+  # Load 10,000 rows of data into the dataframe.
+  data = load_data(10000)
+  # Notify the reader that the data was successfully loaded.
+  data_load_state.text("Dataframe cargado! (usando la función st.cache)")
+  if st.checkbox('Mostrar datos en bruto'):
+    st.subheader('Datos del Dataframe')
     st.write(data)
+  st.subheader('__________________________________________')
+  # Radio selector para escoger tipo de gráfica
+  grafico = st.radio("Elige tipo de gráfica", ('Valoración del empleo', 'Salario Estimado', 'Lugar de trabajo'))
+ 
+if grafico == 'Valoración del empleo':
+  st.subheader('Valoración del empleo de 1 a 5')
+  st.bar_chart(data, width=0,height=0, y='Rating')
+if grafico == 'Salario Estimado':
+  st.subheader('Salario Estimado')
+  st.bar_chart(data, width=0,height=0, y='Salary Estimate')
+if grafico == 'Lugar de trabajo':
+  st.subheader('Lugar de trabajo')
+  st.bar_chart(data, width=0,height=0, y='Location')
 
-st.subheader('Number of pickups by hour')
 
-hist_values = np.histogram(
-    data[DATE_COLUMN].dt.hour, bins=24, range=(0,24))[0]
-	
-st.bar_chart(hist_values)
-
-hour_to_filter = st.slider('hour', 0, 23, 17)  # min: 0h, max: 23h, default: 17h
-filtered_data = data[data[DATE_COLUMN].dt.hour == hour_to_filter]
-st.subheader(f'Map of all pickups at {hour_to_filter}:00')
-st.map(filtered_data)
 
